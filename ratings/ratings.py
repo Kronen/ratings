@@ -20,6 +20,7 @@ class FaRatings:
         self.ratings = self.load_ratings()
         self.path = path
 
+    @staticmethod
     def get_rating(self, film_name):
         response = requests.get(SEARCH_URL + film_name)
         """Avoids ISO-8859-1 as default when character encoding is not specified in the
