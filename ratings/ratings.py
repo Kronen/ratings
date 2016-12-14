@@ -17,7 +17,7 @@ LOG = logging.getLogger(__name__)
 class FaRatings:
 
     def __init__(self, path):
-        self.ratings = self.load_ratings(path)
+        self.ratings = self.load_ratings()
         self.path = path
 
     def get_rating(self, film_name):
@@ -35,18 +35,18 @@ class FaRatings:
             return 'Not Found', '00'
         return title, rating
 
-    def film_files(self, path):
-        for root, dirs, files in os.walk(path, topdown=True):
+    def film_files(self):
+        for root, dirs, files in os.walk(self.path, topdown=True):
             for filename in files:
                 if filename.endswith(EXTENSIONS):
                     yield filename
 
-    def load_ratings(self, path):
+    def load_ratings(self):
         self.ratings = []
         bar = ProgressBar(max_value=UnknownLength)
         count = 0
 
-        for file in self.film_files(path):
+        for file in self.film_files():
             guessed_data = guessit(file)
             guessed_title = guessed_data.get('title', '')
             if guessed_title:
