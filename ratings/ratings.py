@@ -14,7 +14,7 @@ SEARCH_URL = 'https://www.filmaffinity.com/es/advsearch.php?stext='
 LOG = logging.getLogger(__name__)
 
 
-class Ratings:
+class FaRatings:
 
     def __init__(self, path):
         self.ratings = self.load_ratings(path)
