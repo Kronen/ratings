@@ -17,8 +17,9 @@ LOG = logging.getLogger(__name__)
 class FaRatings:
 
     def __init__(self, path):
-        self.ratings = self.load_ratings()
         self.path = path
+        self.ratings = self.load_ratings()
+
 
     @staticmethod
     def get_rating(film_name):
