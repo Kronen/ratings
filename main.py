@@ -8,6 +8,6 @@ LOG = logging.getLogger('ratings')
 
 
 if __name__ == '__main__':
-    path = r''  # EDIT PATH TO MOVIES FOLDER
+    path = ''  # EDIT PATH TO MOVIES FOLDER
     ratings = FaRatings(path)
     ratings.write_ratings()
