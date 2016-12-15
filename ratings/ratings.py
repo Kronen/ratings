@@ -21,7 +21,7 @@ class FaRatings:
         self.path = path
 
     @staticmethod
-    def get_rating(self, film_name):
+    def get_rating(film_name):
         response = requests.get(SEARCH_URL + film_name)
         """Avoids ISO-8859-1 as default when character encoding is not specified in the
         Content-Type header field.
@@ -66,9 +66,9 @@ class FaRatings:
         return ratings
 
     def write_ratings(self, ratings_file='film_ratings.csv'):
-        with open(ratings_file, 'w', encoding="utf8") as csvfile:
+        with open(ratings_file, 'w', encoding="utf8") as csv_file:
             fieldnames = ['rating', 'guessed_title', 'found_title', 'file']
-            writer = DictWriter(csvfile, fieldnames=fieldnames)
+            writer = DictWriter(csv_file, fieldnames=fieldnames)
             writer.writeheader()
             for film in self.ratings:
                 try:
