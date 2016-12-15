@@ -20,7 +20,6 @@ class FaRatings:
         self.path = path
         self.ratings = self.load_ratings()
 
-
     @staticmethod
     def get_rating(film_name):
         response = requests.get(SEARCH_URL + film_name)
