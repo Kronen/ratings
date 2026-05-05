@@ -1,9 +1,7 @@
 const AC_URL = 'https://www.filmaffinity.com/es/search-ac2.w2.ajax.php?action=searchTerm';
 const FA_MAIN = 'https://www.filmaffinity.com/es/main.html';
 const CACHE_PREFIX = 'fa_';
-const MIN_DELAY_MS = 300;
-const MAX_DELAY_MS = 10000;
-let currentDelay = MIN_DELAY_MS;
+const REQUEST_DELAY_MS = 400;
 let ftoken = null;
 
 const queue = [];
@@ -33,10 +31,7 @@ async function drainQueue() {
       resolve(stored[key]);
     } else {
       resolve(await fetchRating(title));
-      if (queue.length > 0) {
-        await sleep(currentDelay);
-        currentDelay = Math.max(MIN_DELAY_MS, currentDelay - 50);
-      }
+      if (queue.length > 0) await sleep(REQUEST_DELAY_MS);
     }
   }
   processing = false;
@@ -58,6 +53,8 @@ async function fetchRating(title) {
   const stored = await browser.storage.local.get(key);
   if (stored[key] !== undefined) return stored[key];
 
+  const empty = { foundTitle: null, rating: null, filmUrl: null };
+
   try {
     const token = await getToken();
     const body = new URLSearchParams({ dataType: 'json', term: title, ...(token ? { ftoken: token } : {}) });
@@ -73,31 +70,24 @@ async function fetchRating(title) {
       body: body.toString(),
     });
 
-    if (acResp.status === 429) {
-      currentDelay = Math.min(currentDelay * 2, MAX_DELAY_MS);
-      await sleep(currentDelay);
-      return fetchRating(title);
-    }
-    if (!acResp.ok) return { foundTitle: null, rating: null };
-
-    const data = await acResp.json();
-    const movies = data?.results?.movies;
-    if (!movies || movies.length === 0) {
-      const empty = { foundTitle: null, rating: null };
+    if (!acResp.ok) {
       await browser.storage.local.set({ [key]: empty });
       return empty;
     }
 
-    const filmId = movies[0].id;
-    const filmUrl = `https://www.filmaffinity.com/es/film${filmId}.html`;
-
-    const filmResp = await fetch(filmUrl, { credentials: 'include' });
-    if (filmResp.status === 429) {
-      currentDelay = Math.min(currentDelay * 2, MAX_DELAY_MS);
-      await sleep(currentDelay);
-      return fetchRating(title);
+    const data = await acResp.json();
+    const movies = data?.results?.movies;
+    if (!movies || movies.length === 0) {
+      await browser.storage.local.set({ [key]: empty });
+      return empty;
     }
-    if (!filmResp.ok) return { foundTitle: null, rating: null };
+
+    const filmUrl = `https://www.filmaffinity.com/es/film${movies[0].id}.html`;
+    const filmResp = await fetch(filmUrl, { credentials: 'include' });
+    if (!filmResp.ok) {
+      await browser.storage.local.set({ [key]: empty });
+      return empty;
+    }
 
     const filmDoc = new DOMParser().parseFromString(await filmResp.text(), 'text/html');
     const result = {
@@ -109,7 +99,7 @@ async function fetchRating(title) {
     await browser.storage.local.set({ [key]: result });
     return result;
   } catch (_) {
-    return { foundTitle: null, rating: null };
+    return empty;
   }
 }
 
