@@ -68,4 +68,4 @@ pytest --integration     # includes live FilmAffinity requests
 ## Acknowledgements
 
 Rating data sourced from [FilmAffinity](https://www.filmaffinity.com).  
-CLI dependencies: [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup), [requests](https://github.com/psf/requests), [guessit](https://guessit.io), [progressbar2](https://progressbar-2.readthedocs.io/).
+CLI dependencies: [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup), [requests](https://github.com/psf/requests), [guessit](https://guessit-io.github.io/guessit/), [progressbar2](https://progressbar-2.readthedocs.io/).
