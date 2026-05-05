@@ -41,13 +41,27 @@ A Python script that scans a local folder of video files, guesses titles with [g
 pip install -r requirements.txt
 ```
 
-Set the `path` variable in `main.py` to your video folder, then:
-
 ```bash
+# Run on a specific folder
+python main.py /path/to/movies
+
+# Run and save that folder for future runs
+python main.py /path/to/movies --save
+
+# Run using the saved path (or current directory if none saved)
 python main.py
 ```
 
-Output: `film_ratings.csv` with columns `rating`, `guessed_title`, `found_title`, `file`.
+The saved path is stored in `~/.faratings.cfg`.
+
+Output: `film_ratings.csv` with columns `rating`, `guessed_title`, `found_title`, `film_url`, `file`.
+
+### Tests
+
+```bash
+pytest                   # unit tests only
+pytest --integration     # includes live FilmAffinity requests
+```
 
 ---
 
